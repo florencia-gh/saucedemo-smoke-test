@@ -24,8 +24,14 @@ describe("SauceDemo Login Smoke Test", () => {
       this.users.invalidPasswordUser.password
     );
 
-    loginPage.assertFailingLoginMessage(
+    loginPage.assertErrorLoginMessage(
       "Username and password do not match any user in this service"
     );
-  });  
+  }); 
+  
+  it("error message when required fields are empty", () => {
+    loginPage.clickLoginButton();
+
+    loginPage.assertErrorLoginMessage("Username is required");
+  });
 });

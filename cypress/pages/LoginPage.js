@@ -21,7 +21,7 @@ class LoginPage {
     this.clickLoginButton();
   }
 
-  assertFailingLoginMessage(expectedMessage) {
+  assertErrorLoginMessage(expectedMessage) {
     cy.get('[data-test="error"]').should('be.visible').and('contain.text', expectedMessage);
   }
 
