@@ -8,7 +8,7 @@ describe("SauceDemo Login Smoke Test", () => {
     loginPage.visit();
   });
 
-  it("Login successfull with valid credentials", function () {
+  it("login successfull with valid credentials", function () {
     loginPage.login(
       this.users.validUser.username,
       this.users.validUser.password
@@ -17,4 +17,15 @@ describe("SauceDemo Login Smoke Test", () => {
     cy.url().should("include", "/inventory.html");
     cy.get('[data-test="title"]').should("have.text", "Products");
   });
+
+  it("error message when password is incorrect", function () {
+    loginPage.login(
+      this.users.invalidPasswordUser.username,
+      this.users.invalidPasswordUser.password
+    );
+
+    loginPage.assertFailingLoginMessage(
+      "Username and password do not match any user in this service"
+    );
+  });  
 });
