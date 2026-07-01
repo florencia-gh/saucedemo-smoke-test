@@ -1,0 +1,256 @@
+{
+  "info": {
+    "_postman_id": "8aee3d89-b459-4a8d-9dd6-2b12d8a2b24a",
+    "name": "ReqRes API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "41827428"
+  },
+  "item": [
+    {
+      "name": "POST Create User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "",
+              "const response = pm.response.json();",
+              "",
+              "pm.test(\"Response contains created user id\", function () {",
+              "  pm.expect(response).to.have.property(\"id\");",
+              "});",
+              "",
+              "pm.test(\"Response contains expected name and job\", function () {",
+              "  pm.expect(response.name).to.eql(\"Test User\");",
+              "  pm.expect(response.job).to.eql(\"Automation Engineer\");",
+              "});",
+              "",
+              "pm.environment.set(\"userId\", response.id);",
+              "pm.environment.set(\"createdUserName\", response.name);",
+              "pm.environment.set(\"createdUserJob\", response.job);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test User\",\n  \"job\": \"Automation Engineer\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Created User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const response = pm.response.json();",
+              "",
+              "pm.test(\"Response contains user data\", function () {",
+              "  pm.expect(response).to.have.property(\"data\");",
+              "});",
+              "",
+              "pm.test(\"Created user data matches POST request data\", function () {",
+              "  const expectedName = pm.environment.get(\"createdUserName\");",
+              "  const expectedJob = pm.environment.get(\"createdUserJob\");",
+              "",
+              "  pm.expect(response.data).to.have.property(\"id\");",
+              "  pm.expect(response.data.name).to.eql(expectedName);",
+              "  pm.expect(response.data.job).to.eql(expectedJob);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/users/{{userId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            "{{userId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Users",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const response = pm.response.json();",
+              "",
+              "pm.test(\"Response contains pagination fields\", function () {",
+              "  pm.expect(response).to.have.property(\"page\");",
+              "  pm.expect(response).to.have.property(\"per_page\");",
+              "  pm.expect(response).to.have.property(\"total\");",
+              "  pm.expect(response).to.have.property(\"total_pages\");",
+              "});",
+              "",
+              "pm.test(\"Response contains users list\", function () {",
+              "  pm.expect(response).to.have.property(\"data\");",
+              "  pm.expect(response.data).to.be.an(\"array\");",
+              "  pm.expect(response.data.length).to.be.greaterThan(0);",
+              "});",
+              "",
+              "pm.test(\"Each user contains expected fields\", function () {",
+              "  response.data.forEach(function (user) {",
+              "    pm.expect(user).to.have.property(\"id\");",
+              "    pm.expect(user).to.have.property(\"email\");",
+              "    pm.expect(user).to.have.property(\"first_name\");",
+              "    pm.expect(user).to.have.property(\"last_name\");",
+              "    pm.expect(user).to.have.property(\"avatar\");",
+              "  });",
+              "});",
+              "",
+              "const users = response.data;",
+              "const randomIndex = Math.floor(Math.random() * users.length);",
+              "const selectedUser = users[randomIndex];",
+              "",
+              "pm.environment.set(\"existingUserId\", selectedUser.id);",
+              "pm.environment.set(\"existingUserEmail\", selectedUser.email);",
+              "pm.environment.set(\"existingUserFirstName\", selectedUser.first_name);",
+              "pm.environment.set(\"existingUserLastName\", selectedUser.last_name);",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/users/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Existing User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const response = pm.response.json();",
+              "",
+              "pm.test(\"Response contains user data\", function () {",
+              "  pm.expect(response).to.have.property(\"data\");",
+              "});",
+              "",
+              "pm.test(\"User data matches existing user\", function () {",
+              "  pm.expect(response.data.email).to.eql(pm.environment.get(\"existingUserEmail\"));",
+              "  pm.expect(response.data.first_name).to.eql(pm.environment.get(\"existingUserFirstName\"));",
+              "  pm.expect(response.data.last_name).to.eql(pm.environment.get(\"existingUserLastName\"));",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/users/{{existingUserId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            "{{existingUserId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
