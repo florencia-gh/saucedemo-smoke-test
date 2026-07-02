@@ -34,4 +34,18 @@ describe("SauceDemo Login Smoke Test", () => {
 
     loginPage.assertErrorLoginMessage("Username is required");
   });
+
+  it("error message when required password field is empty", function () { 
+    loginPage.enterUsername(this.users.validUser.username);
+    loginPage.clickLoginButton();
+
+    loginPage.assertErrorLoginMessage("Password is required");
+  });
+
+  it("error message when required username field is empty", function () { 
+    loginPage.enterPassword(this.users.validUser.password);
+    loginPage.clickLoginButton();
+
+    loginPage.assertErrorLoginMessage("Username is required");
+  });
 });
